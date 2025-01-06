@@ -91,10 +91,12 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 
+  assets:
+    - assets/icon/
+
 flutter_launcher_icons:
-  android: "ic_launcher"
-  ios: true
-  image_path: "assets/icon/app_icon.png"  # 여기에 아이콘 이미지 경로를 지정
-  min_sdk_android: 21 # android min sdk min:16, default 21
-  adaptive_icon_background: "#414142" # 안드로이드 adaptive icon 배경색
-  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png" # 안드로이드 adaptive icon 전경 이미지
+  android: true
+  ios: false
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#414142"
+  min_sdk_android: 21

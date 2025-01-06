@@ -3,8 +3,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui' as ui;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // 앱 아이콘 생성
+  try {
+    await generateTempIcon();
+  } catch (e) {
+    print('Icon generation failed: $e');
+  }
+  
   runApp(const MyApp());
 }
 
@@ -393,4 +404,46 @@ class _StockSearchPageState extends State<StockSearchPage> {
     _focusNode.dispose();
     super.dispose();
   }
+}
+
+Future<void> generateTempIcon() async {
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder);
+  final size = const Size(1024, 1024);
+  
+  // 배경
+  final paint = Paint()..color = const Color(0xFF414142);
+  canvas.drawRect(Offset.zero & size, paint);
+  
+  // 텍스트
+  const text = 'USA\nTicker';
+  final textPainter = TextPainter(
+    text: TextSpan(
+      text: text,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 200,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    textAlign: TextAlign.center,
+    textDirection: ui.TextDirection.ltr,
+  );
+  
+  textPainter.layout(maxWidth: size.width);
+  textPainter.paint(
+    canvas,
+    Offset(
+      (size.width - textPainter.width) / 2,
+      (size.height - textPainter.height) / 2,
+    ),
+  );
+  
+  final picture = recorder.endRecording();
+  final img = await picture.toImage(1024, 1024);
+  final pngBytes = await img.toByteData(format: ui.ImageByteFormat.png);
+  
+  final file = File('assets/icon/app_icon.png');
+  await file.parent.create(recursive: true);
+  await file.writeAsBytes(pngBytes!.buffer.asUint8List());
 }
